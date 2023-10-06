@@ -5,14 +5,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import vn.edu.usth.usthopendotaclient.Search.ModelClass;
+import java.util.ArrayList;
+
+import vn.edu.usth.usthopendotaclient.Search.profile.matches.Matches_History_Fragment;
+import vn.edu.usth.usthopendotaclient.Search.profile.overview.OverviewFragment;
+import vn.edu.usth.usthopendotaclient.network.models.PlayerObj;
+import vn.edu.usth.usthopendotaclient.network.models.RecentMatchesObj;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private String titles[]=new String[]{"Overview","Matches","Heroes"};
-    ModelClass user;
-    public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior, ModelClass user) {
+    PlayerObj user;
+    ArrayList<RecentMatchesObj> recentMatchList;
+    public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior, PlayerObj user,ArrayList<RecentMatchesObj> recentMatchList) {
         super(fm,behavior);
         this.user=user;
+        this.recentMatchList= recentMatchList;
     }
 
     @NonNull
@@ -21,7 +28,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (page){
             case 1: return new Matches_History_Fragment();
             case 2: return new PlayerHeroesFragment();
-            default: return new OverviewFragment(user);
+            default: return new OverviewFragment(user,recentMatchList);
         }
     }
 

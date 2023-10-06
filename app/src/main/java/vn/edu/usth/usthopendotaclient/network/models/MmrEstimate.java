@@ -1,6 +1,8 @@
-package vn.edu.usth.usthopendotaclient.Search.Model;
+package vn.edu.usth.usthopendotaclient.network.models;
 
-public class mmr_estimate {
+import java.io.Serializable;
+
+public class MmrEstimate implements Serializable {
     private int estimate;
 
     public int getEstimate() {

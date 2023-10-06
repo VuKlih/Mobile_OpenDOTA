@@ -1,5 +1,6 @@
 package vn.edu.usth.usthopendotaclient.Favorite;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,14 +17,19 @@ import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.util.ArrayList;
+
 import vn.edu.usth.usthopendotaclient.MainActivity;
 import vn.edu.usth.usthopendotaclient.R;
 import vn.edu.usth.usthopendotaclient.Search.Search_Activity;
 import vn.edu.usth.usthopendotaclient.Setting.SettingActivity;
 import vn.edu.usth.usthopendotaclient.Search.profile.playerProfile_Activity;
+import vn.edu.usth.usthopendotaclient.network.models.ProPlayerObj;
+import vn.edu.usth.usthopendotaclient.utils.PrefUtil;
 
 public class Favourites_Activity extends AppCompatActivity {
     private CardView cardViewItem;
+    private ArrayList<ProPlayerObj> listFavorited;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,14 +76,10 @@ public class Favourites_Activity extends AppCompatActivity {
             }
         });
 
-        cardViewItem = findViewById(R.id.fav_cardview);
-        cardViewItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(Favourites_Activity.this, playerProfile_Activity.class);
-                startActivity(intent);
-            }
-        });
+
+
+
+        listFavorited = PrefUtil.getListFavorite(getSharedPreferences("shared", Context.MODE_PRIVATE));
 
     }
 }

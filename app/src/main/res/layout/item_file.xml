@@ -63,6 +63,7 @@
                 android:text="ID: 185476982" />
         </LinearLayout>
         <ImageView
+            android:id="@+id/iv_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/name_id"

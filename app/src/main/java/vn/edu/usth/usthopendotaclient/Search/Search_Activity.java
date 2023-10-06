@@ -8,6 +8,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,22 +33,29 @@ import retrofit2.Response;
 import vn.edu.usth.usthopendotaclient.Favorite.Favourites_Activity;
 import vn.edu.usth.usthopendotaclient.MainActivity;
 import vn.edu.usth.usthopendotaclient.R;
+import vn.edu.usth.usthopendotaclient.Search.profile.overview.RecentMatchesAdapter;
+import vn.edu.usth.usthopendotaclient.Search.profile.playerProfile_Activity;
 import vn.edu.usth.usthopendotaclient.Setting.SettingActivity;
 import vn.edu.usth.usthopendotaclient.network.NetWorkFactory;
 import vn.edu.usth.usthopendotaclient.network.models.PlayerObj;
+import vn.edu.usth.usthopendotaclient.network.models.PlayerWinLoss;
+import vn.edu.usth.usthopendotaclient.network.models.ProPlayerObj;
+import vn.edu.usth.usthopendotaclient.network.models.RecentMatchesObj;
+import vn.edu.usth.usthopendotaclient.utils.PrefUtil;
 
 public class Search_Activity extends AppCompatActivity {
-
     private final String TAG = Search_Activity.class.getSimpleName();
-
     private RelativeLayout relativeLayoutSearch;
     private SharedPreferences sharedPreferences;
     SearchView searchView;
     private RecyclerView recyclerView;
     private SearchAdapter searchAdapter;
-    ArrayList<PlayerObj> listPlayer;
-    ArrayList<PlayerObj> arrayList;
+    ArrayList<ProPlayerObj> listFavorited;
+    ArrayList<ProPlayerObj> listPlayer;
+    ArrayList<ProPlayerObj> arrayList;
     ArrayList<ModelClass> searchList;
+    PlayerObj playerObj;
+
 
     // to store background color
     private int storedColor;
@@ -110,8 +120,36 @@ public class Search_Activity extends AppCompatActivity {
 
         listPlayer = new ArrayList<>();
         arrayList = new ArrayList<>();
-        searchAdapter = new SearchAdapter(Search_Activity.this, arrayList);
+        searchAdapter = new SearchAdapter(Search_Activity.this, arrayList, new SearchAdapter.IOnSearchAdapterListener() {
+            @Override
+            public void onClickItem(ProPlayerObj user) {
+                onClickGoTODetail(user);
+            }
+
+            @Override
+            public void onClickFavorite(ProPlayerObj user) {
+                PrefUtil.saveFavorite(Search_Activity.this, user);
+                for(ProPlayerObj item: listPlayer){
+                    if(item.getAccountId() == user.getAccountId()){
+                        item.setFavorited(true);
+                        break;
+                    }
+                }
+                for(ProPlayerObj item: arrayList){
+                    if(item.getAccountId() == user.getAccountId()){
+                        item.setFavorited(true);
+                        break;
+                    }
+                }
+                searchAdapter.notifyDataSetChanged();
+            }
+        });
         recyclerView.setAdapter(searchAdapter);
+
+
+        listFavorited = PrefUtil.getListFavorite(getSharedPreferences("shared", Context.MODE_PRIVATE));
+        callGetProPlayer();
+
 
         // search bar
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -123,7 +161,7 @@ public class Search_Activity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 arrayList.clear();
-                for(PlayerObj item: listPlayer){
+                for(ProPlayerObj item: listPlayer){
                     if(item.getName().contains(newText)) {
                         arrayList.add(item);
                     }
@@ -133,25 +171,32 @@ public class Search_Activity extends AppCompatActivity {
             }
         });
 
-        callGetProPlayer();
     }
 
     private void callGetProPlayer() {
-        NetWorkFactory.getProPlayer().enqueue(new Callback<List<PlayerObj>>() {
+        NetWorkFactory.getProPlayer().enqueue(new Callback<List<ProPlayerObj>>() {
             @Override
-            public void onResponse(Call<List<PlayerObj>> call, Response<List<PlayerObj>> response) {
+            public void onResponse(Call<List<ProPlayerObj>> call, Response<List<ProPlayerObj>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().size() > 0) {
                     listPlayer.clear();
-                    listPlayer.addAll(response.body().subList(0, Math.min(response.body().size(), 20)));
                     arrayList.clear();
-                    arrayList.addAll(response.body().subList(0, Math.min(response.body().size(), 20)));
+                    for(ProPlayerObj item: response.body().subList(0, Math.min(response.body().size(), 30))){
+                        for (ProPlayerObj itemFavorite : listFavorited) {
+                            if (item.getAccountId() == itemFavorite.getAccountId()) {
+                                item.setFavorited(true);
+                                break;
+                            }
+                        }
+                        listPlayer.add(item);
+                        arrayList.add(item);
+                    }
                     searchAdapter.notifyDataSetChanged();
                 }
                 //TODO: remove bot giu lai 20 items
             }
 
             @Override
-            public void onFailure(Call<List<PlayerObj>> call, Throwable t) {
+            public void onFailure(Call<List<ProPlayerObj>> call, Throwable t) {
                 Log.e(TAG, "onFailure: ", t);
             }
         });
@@ -166,6 +211,69 @@ public class Search_Activity extends AppCompatActivity {
             relativeLayoutSearch.setBackgroundColor(storedColor);
         }
     }
+
+
+    private void onClickGoTODetail(ProPlayerObj user) {
+        NetWorkFactory.getRecentMatch(user.getAccountId()).enqueue(new Callback<List<RecentMatchesObj>>() {
+            @Override
+            public void onResponse(Call<List<RecentMatchesObj>> call, Response<List<RecentMatchesObj>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().size() > 0) {
+                    callGetPlayerData(user,
+                            response.body().subList(0, Math.min(response.body().size(), 30)));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RecentMatchesObj>> call, Throwable t) {
+                Log.e("recent matches list", "onFailure: ", t);
+            }
+        });
+
+
+    }
+
+    private void callGetPlayerData(ProPlayerObj user, List<RecentMatchesObj> recentMatchesList) {
+        NetWorkFactory.getPlayerData(user.getAccountId()).enqueue(new Callback<PlayerObj>() {
+            @Override
+            public void onResponse(Call<PlayerObj> call, Response<PlayerObj> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    PlayerObj playerObj = response.body();
+                    playerObj.setProfile(user);
+                    callGetPlayerWl(playerObj, user.getAccountId(), recentMatchesList);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlayerObj> call, Throwable t) {
+                Log.e("player_data", "onFailure: ", t);
+            }
+        });
+    }
+
+    private void callGetPlayerWl(PlayerObj playerObj, int accountId, List<RecentMatchesObj> recentMatchesList) {
+
+        NetWorkFactory.getPlayerWinLoss(accountId).enqueue(new Callback<PlayerWinLoss>() {
+            @Override
+            public void onResponse(Call<PlayerWinLoss> call, Response<PlayerWinLoss> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    playerObj.setWinLoss(response.body());
+                    Intent intent = new Intent(Search_Activity.this, playerProfile_Activity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("player_data", playerObj);
+                    bundle.putSerializable("player_recent_matches", new ArrayList<>(recentMatchesList));
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlayerWinLoss> call, Throwable t) {
+                Log.e("recent matches list", "onFailure: ", t);
+            }
+        });
+    }
+
+
 }
 
 

@@ -7,5 +7,6 @@
     <dimen name="appbar_padding_top">8dp</dimen>
 
     <dimen name="wins_loses_winrate">15sp</dimen>
-    <dimen name="recentMaches_overview_textsize">20sp</dimen>
+    <dimen name="recentMaches_overview_textsize">15sp</dimen>
+    <dimen name="Maches_hero_mode_ended_length_KDA_textsize">20sp</dimen>
 </resources>

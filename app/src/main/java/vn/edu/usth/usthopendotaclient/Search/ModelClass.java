@@ -5,6 +5,7 @@ import android.widget.ProgressBar;
 import java.io.Serializable;
 
 public class ModelClass implements Serializable {
+
     String userName,userNum; //userNum=user id
     String userWin, userLose;
     String userWinrate;

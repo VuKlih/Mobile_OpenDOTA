@@ -1,4 +1,4 @@
-package vn.edu.usth.usthopendotaclient.Search.profile;
+package vn.edu.usth.usthopendotaclient.Search.profile.matches;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
