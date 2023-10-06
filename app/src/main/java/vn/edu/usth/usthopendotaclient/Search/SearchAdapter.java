@@ -109,7 +109,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyHolder>{
     }
 
 
-    interface IOnSearchAdapterListener{
+    public interface IOnSearchAdapterListener{
         void onClickItem(ProPlayerObj user);
         void onClickFavorite(ProPlayerObj user);
     }

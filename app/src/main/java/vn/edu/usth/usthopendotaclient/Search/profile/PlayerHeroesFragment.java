@@ -24,32 +24,6 @@ public class PlayerHeroesFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_player_heroes, container, false);
 
-        anti_mage= v.findViewById(R.id.anti_mage);
-        invoker= v.findViewById(R.id.invoker);
-        slark= v.findViewById(R.id.slark);
-
-        anti_mage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Hero_info.class);
-                startActivity(intent);
-            }
-        });
-        invoker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Hero_info.class);
-                startActivity(intent);
-            }
-        });
-        slark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Hero_info.class);
-                startActivity(intent);
-            }
-        });
-
 
 
         return v;

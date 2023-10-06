@@ -153,7 +153,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.2"
                     android:gravity="center"
-                    android:text="Match"
+                    android:text="Ended"
                     android:textSize="@dimen/recentMaches_overview_textsize"
                     android:textColor="@color/white"
                     android:textStyle="bold"/>

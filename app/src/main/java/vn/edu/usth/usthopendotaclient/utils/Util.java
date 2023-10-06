@@ -4,6 +4,61 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Util {
+    public static String getLobbyTypeNameById(int id) {
+        String name = "";
+        switch (id){
+            case 1:
+                name="practice";
+                break;
+            case 2:
+                name="tournament";
+                break;
+            case 3:
+                name="tutorial";
+                break;
+            case 4:
+                name="coop_bots";
+                break;
+            case 5:
+                name="ranked_team_mm";
+                break;
+            case 6:
+                name="ranked_solo_mm";
+                break;
+            case 7:
+                name="ranked";
+                break;
+            case 8:
+                name="1v1_mid";
+                break;
+            case 9:
+                name="battle_cup";
+                break;
+            case 10:
+                name="local_bots";
+                break;
+            case 11:
+                name="spectator";
+                break;
+            case 12:
+                name="event";
+                break;
+            case 13:
+                name="gauntlet";
+                break;
+            case 14:
+                name="new_player";
+                break; 
+            case 15:
+                name="featured";
+                break;
+            default :
+                name="normal";
+                break;
+        }
+        return name;
+
+    }
     public static String getGameModeNameById(int id) {
         String name = "";
         switch (id) {

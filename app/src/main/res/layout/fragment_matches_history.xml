@@ -77,7 +77,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.2"
                         android:gravity="center"
-                        android:text="Match"
+                        android:text="Ended"
                         android:textSize="@dimen/Maches_hero_mode_ended_length_KDA_textsize"
                         android:textColor="@color/white"/>
                     <TextView

@@ -26,7 +26,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int page) {
         switch (page){
-            case 1: return new Matches_History_Fragment();
+            case 1: return new Matches_History_Fragment(recentMatchList);
             case 2: return new PlayerHeroesFragment();
             default: return new OverviewFragment(user,recentMatchList);
         }

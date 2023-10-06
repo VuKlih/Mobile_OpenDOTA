@@ -53,7 +53,6 @@ public class Search_Activity extends AppCompatActivity {
     ArrayList<ProPlayerObj> listFavorited;
     ArrayList<ProPlayerObj> listPlayer;
     ArrayList<ProPlayerObj> arrayList;
-    ArrayList<ModelClass> searchList;
     PlayerObj playerObj;
 
 
@@ -172,6 +171,15 @@ public class Search_Activity extends AppCompatActivity {
         });
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int updatedColor = sharedPreferences.getInt("selected_color", getResources().getColor(R.color.background));
+        if (storedColor != updatedColor) {
+            storedColor = updatedColor;
+            relativeLayoutSearch.setBackgroundColor(storedColor);
+        }
+    }
 
     private void callGetProPlayer() {
         NetWorkFactory.getProPlayer().enqueue(new Callback<List<ProPlayerObj>>() {
@@ -202,17 +210,6 @@ public class Search_Activity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        int updatedColor = sharedPreferences.getInt("selected_color", getResources().getColor(R.color.background));
-        if (storedColor != updatedColor) {
-            storedColor = updatedColor;
-            relativeLayoutSearch.setBackgroundColor(storedColor);
-        }
-    }
-
-
     private void onClickGoTODetail(ProPlayerObj user) {
         NetWorkFactory.getRecentMatch(user.getAccountId()).enqueue(new Callback<List<RecentMatchesObj>>() {
             @Override
@@ -222,7 +219,6 @@ public class Search_Activity extends AppCompatActivity {
                             response.body().subList(0, Math.min(response.body().size(), 30)));
                 }
             }
-
             @Override
             public void onFailure(Call<List<RecentMatchesObj>> call, Throwable t) {
                 Log.e("recent matches list", "onFailure: ", t);
