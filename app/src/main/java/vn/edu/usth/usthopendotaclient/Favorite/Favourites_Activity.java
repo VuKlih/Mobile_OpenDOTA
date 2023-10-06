@@ -2,6 +2,7 @@ package vn.edu.usth.usthopendotaclient.Favorite;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.navigation.NavigationView;
@@ -9,8 +10,10 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -28,12 +31,20 @@ import vn.edu.usth.usthopendotaclient.network.models.ProPlayerObj;
 import vn.edu.usth.usthopendotaclient.utils.PrefUtil;
 
 public class Favourites_Activity extends AppCompatActivity {
+    private RelativeLayout relativeLayoutSearch;
+    private SharedPreferences sharedPreferences;
+    private int storedColor;
     private CardView cardViewItem;
     private ArrayList<ProPlayerObj> listFavorited;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
+
+        relativeLayoutSearch = findViewById(R.id.relative_layout_favorite);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        storedColor = sharedPreferences.getInt("selected_color", getResources().getColor(R.color.background));
+        relativeLayoutSearch.setBackgroundColor(storedColor);
 
         Toolbar toolbar = findViewById(R.id.favourites_toolbar);
         setSupportActionBar(toolbar);
@@ -81,5 +92,15 @@ public class Favourites_Activity extends AppCompatActivity {
 
         listFavorited = PrefUtil.getListFavorite(getSharedPreferences("shared", Context.MODE_PRIVATE));
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int updatedColor = sharedPreferences.getInt("selected_color", getResources().getColor(R.color.background));
+        if (storedColor != updatedColor) {
+            storedColor = updatedColor;
+            relativeLayoutSearch.setBackgroundColor(storedColor);
+        }
     }
 }
