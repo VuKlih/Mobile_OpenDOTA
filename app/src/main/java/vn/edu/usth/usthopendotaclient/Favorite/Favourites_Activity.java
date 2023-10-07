@@ -57,10 +57,10 @@ public class Favourites_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
 
-        relativeLayoutSearch = findViewById(R.id.relative_layout_favorite);
+        recyclerView = findViewById(R.id.fav_recycleview);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         storedColor = sharedPreferences.getInt("selected_color", getResources().getColor(R.color.background));
-        relativeLayoutSearch.setBackgroundColor(storedColor);
+        recyclerView.setBackgroundColor(storedColor);
 
         Toolbar toolbar = findViewById(R.id.favourites_toolbar);
         setSupportActionBar(toolbar);
@@ -129,7 +129,7 @@ public class Favourites_Activity extends AppCompatActivity {
         int updatedColor = sharedPreferences.getInt("selected_color", getResources().getColor(R.color.background));
         if (storedColor != updatedColor) {
             storedColor = updatedColor;
-            relativeLayoutSearch.setBackgroundColor(storedColor);
+            recyclerView.setBackgroundColor(storedColor);
         }
     }
 
